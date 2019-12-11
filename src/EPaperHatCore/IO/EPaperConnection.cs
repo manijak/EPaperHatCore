@@ -1,6 +1,7 @@
 using System;
 using Unosquare.RaspberryIO;
 using Unosquare.RaspberryIO.Abstractions;
+//using System.Device.Gpio;
 
 namespace BetaSoft.EPaperHatCore.IO
 {
@@ -22,6 +23,13 @@ namespace BetaSoft.EPaperHatCore.IO
                 _connection.CsPin.Write(GpioPinValue.Low);
                 _connection.Channel.SendReceive(BitConverter.GetBytes(command));
                 _connection.CsPin.Write(GpioPinValue.High);
+
+
+                /******* System.Device.Gpio Alternative *********/
+                //_connection.Gpio.Write(_connection.DcPin, PinValue.Low);
+                //_connection.Gpio.Write(_connection.CsPin, PinValue.Low);
+                //_connection.SpiDevice.Write(BitConverter.GetBytes(command));
+                //_connection.Gpio.Write(_connection.CsPin, PinValue.High);
             }
         }
 
@@ -33,6 +41,13 @@ namespace BetaSoft.EPaperHatCore.IO
                 _connection.CsPin.Write(GpioPinValue.Low);
                 _connection.Channel.SendReceive(BitConverter.GetBytes(data));
                 _connection.CsPin.Write(GpioPinValue.High);
+
+
+                /******* System.Device.Gpio Alternative *********/
+                //_connection.Gpio.Write(_connection.DcPin, PinValue.High);
+                //_connection.Gpio.Write(_connection.CsPin, PinValue.Low);
+                //_connection.SpiDevice.Write(BitConverter.GetBytes(data));
+                //_connection.Gpio.Write(_connection.CsPin, PinValue.High);
             }
         }
     }

@@ -1,11 +1,10 @@
-using Unosquare.RaspberryIO;
-using Unosquare.RaspberryIO.Abstractions;
 
 namespace BetaSoft.EPaperHatCore
 {
     internal static class HardwareCodes
     {   
         public const int POWER_ON = 0x04;
+        public const int POWER_OFF = 0x02;
         public const int PANEL_SETTING = 0x00;
         public const int PLL_CONTROL = 0x30;
         public const int POWER_SETTING = 0x01;
@@ -22,7 +21,13 @@ namespace BetaSoft.EPaperHatCore
         public const int DATA_STOP = 0x11;
         public const int DATA_START_TRANSMISSION_2 = 0x13;
         public const int DISPLAY_REFRESH = 0x12;
-        public static int[] lut_vcom_dc = new int[]{
+        public const int TCON_SETTING = 0x60;
+        public const int TCON_RESOLUTION = 0x61;
+        public const int FLASH_CONTROL = 0x65;
+        public const int FLASH_MODE = 0xe5;
+        public const int GET_STATUS = 0x71;
+        public const int DEEP_SLEEP = 0x07;
+        public static int[] lut_vcom_dc = {
             0x00, 0x00,
             0x00, 0x1A, 0x1A, 0x00, 0x00, 0x01,
             0x00, 0x0A, 0x0A, 0x00, 0x00, 0x08,
@@ -34,7 +39,7 @@ namespace BetaSoft.EPaperHatCore
         };
 
         //R21H
-        public static int[] lut_ww = new int[]{
+        public static int[] lut_ww = {
             0x90, 0x1A, 0x1A, 0x00, 0x00, 0x01,
             0x40, 0x0A, 0x0A, 0x00, 0x00, 0x08,
             0x84, 0x0E, 0x01, 0x0E, 0x01, 0x10,
@@ -45,7 +50,7 @@ namespace BetaSoft.EPaperHatCore
         };
 
         //R22H r
-        public static int[] lut_bw = new int[]{
+        public static int[] lut_bw = {
             0xA0, 0x1A, 0x1A, 0x00, 0x00, 0x01,
             0x00, 0x0A, 0x0A, 0x00, 0x00, 0x08,
             0x84, 0x0E, 0x01, 0x0E, 0x01, 0x10,
@@ -56,7 +61,7 @@ namespace BetaSoft.EPaperHatCore
         };
 
         //R23H w
-        public static int[] lut_bb = new int[] {
+        public static int[] lut_bb = {
             0x90, 0x1A, 0x1A, 0x00, 0x00, 0x01,
             0x40, 0x0A, 0x0A, 0x00, 0x00, 0x08,
             0x84, 0x0E, 0x01, 0x0E, 0x01, 0x10,
@@ -67,7 +72,7 @@ namespace BetaSoft.EPaperHatCore
         };
 
         //R24H b
-        public static int[] lut_wb = new int[]{
+        public static int[] lut_wb = {
             0x90, 0x1A, 0x1A, 0x00, 0x00, 0x01,
             0x20, 0x0A, 0x0A, 0x00, 0x00, 0x08,
             0x84, 0x0E, 0x01, 0x0E, 0x01, 0x10,

@@ -22,7 +22,8 @@ namespace BetaSoft.EPaperHatCore.GUI
         {
             WHITE = 0xFF,
             BLACK = 0x00,
-            RED = Color.BLACK
+            RED = Color.BLACK,
+            YELLOW = Color.BLACK
         }
 
         public enum DotStyle

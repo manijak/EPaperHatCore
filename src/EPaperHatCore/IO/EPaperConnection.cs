@@ -21,9 +21,13 @@ namespace BetaSoft.EPaperHatCore.IO
             {
                 _connection.DcPin.Write(GpioPinValue.Low);
                 _connection.CsPin.Write(GpioPinValue.Low);
-                _connection.Channel.SendReceive(BitConverter.GetBytes(command));
+                var res = _connection.Channel.SendReceive(BitConverter.GetBytes(command));
                 _connection.CsPin.Write(GpioPinValue.High);
 
+                //Console.WriteLine("------ Command Response ------");
+                if(BitConverter.ToUInt16(res) != 0)
+                    Console.Write(BitConverter.ToUInt16(res));
+                //Console.WriteLine("------ Command Response END ------");
 
                 /******* System.Device.Gpio Alternative *********/
                 //_connection.Gpio.Write(_connection.DcPin, PinValue.Low);
@@ -39,8 +43,13 @@ namespace BetaSoft.EPaperHatCore.IO
             {
                 _connection.DcPin.Write(GpioPinValue.High);
                 _connection.CsPin.Write(GpioPinValue.Low);
-                _connection.Channel.SendReceive(BitConverter.GetBytes(data));
+                var res = _connection.Channel.SendReceive(BitConverter.GetBytes(data));
                 _connection.CsPin.Write(GpioPinValue.High);
+
+                //Console.WriteLine("------ Data Response ------");
+                if (BitConverter.ToUInt16(res) != 0)
+                    Console.Write(BitConverter.ToUInt16(res));
+                //Console.WriteLine("------ Data Response END ------");
 
 
                 /******* System.Device.Gpio Alternative *********/

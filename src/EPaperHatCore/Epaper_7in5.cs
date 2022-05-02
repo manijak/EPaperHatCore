@@ -9,14 +9,14 @@ using Unosquare.RaspberryIO.Abstractions;
 namespace BetaSoft.EPaperHatCore
 {
     /// <summary>
-    /// Driver class for the Waveshare 7.5" 3-color ePaper display (B and C versions)
+    /// Driver class for the Waveshare 7.5" 2-color ePaper display
     /// TODO: Each driver class should probably inherit from a base class to implement the common parts
     /// </summary>
-    public class Epaper_7in5bc
+    public class Epaper_7in5
     {
         private readonly IEpaperConnection _ePaperConnection;
         private readonly Connections _connections;
-        public Epaper_7in5bc(int screenWidth, int screenHeight, IHardwareSpecification specification = null)
+        public Epaper_7in5(int screenWidth, int screenHeight, IHardwareSpecification specification = null)
         {
             if (screenWidth <= 0 || screenHeight <= 0)
             {
@@ -52,21 +52,25 @@ namespace BetaSoft.EPaperHatCore
             _ePaperConnection.SendData(0x08);
 
 
-            Console.WriteLine("Set PLL_CONTROL");
-            _ePaperConnection.SendCommand(HardwareCodes.PLL_CONTROL);
-            _ePaperConnection.SendData(0x3A);       // PLL:  0-15:0x3C, 15+:0x3A
-
-
-            Console.WriteLine("Set VCM_DC_SETTING");
-            _ePaperConnection.SendCommand(HardwareCodes.VCM_DC_SETTING_REGISTER);
-            _ePaperConnection.SendData(0x28);       //all temperature  range
-
-
             Console.WriteLine("Set BOOSTER_SOFT_START");
             _ePaperConnection.SendCommand(HardwareCodes.BOOSTER_SOFT_START);
             _ePaperConnection.SendData(0xc7);
             _ePaperConnection.SendData(0xcc);
-            _ePaperConnection.SendData(0x15);
+            _ePaperConnection.SendData(0x28);
+
+
+            _ePaperConnection.SendCommand(HardwareCodes.POWER_ON);
+            WaitUntilIdle();
+
+
+            Console.WriteLine("Set PLL_CONTROL");
+            _ePaperConnection.SendCommand(HardwareCodes.PLL_CONTROL);
+            _ePaperConnection.SendData(0x3c);       // PLL:  0-15:0x3C, 15+:0x3A
+
+
+            Console.WriteLine("Set TEMPERATURE_CALIBRATION");
+            _ePaperConnection.SendCommand(0x41);
+            _ePaperConnection.SendData(0x00);
 
 
             Console.WriteLine("Set VCOM_AND_DATA_INTERVAL_SETTING");
@@ -79,17 +83,17 @@ namespace BetaSoft.EPaperHatCore
             _ePaperConnection.SendData(0x22);
 
 
-            Console.WriteLine("Set FLASH_CONTROL");
-            _ePaperConnection.SendCommand(HardwareCodes.FLASH_CONTROL);
-            _ePaperConnection.SendData(0x00);
-
-
             Console.WriteLine("Set TCON_RESOLUTION");
             _ePaperConnection.SendCommand(HardwareCodes.TCON_RESOLUTION);
-            _ePaperConnection.SendData(ScreenWidth >> 8);      //source 640
-            _ePaperConnection.SendData(ScreenWidth & 0xff);
-            _ePaperConnection.SendData(ScreenHeight >> 8);     //gate 384
-            _ePaperConnection.SendData(ScreenHeight & 0xff);
+            _ePaperConnection.SendData(0x02);     //source 640
+            _ePaperConnection.SendData(0x80);
+            _ePaperConnection.SendData(0x01);     //gate 384
+            _ePaperConnection.SendData(0x80);
+
+
+            Console.WriteLine("Set VCM_DC_SETTING");
+            _ePaperConnection.SendCommand(HardwareCodes.VCM_DC_SETTING_REGISTER);
+            _ePaperConnection.SendData(0x1E);
 
 
             Console.WriteLine("Set FLASH_MODE");
@@ -107,9 +111,9 @@ namespace BetaSoft.EPaperHatCore
         {
             Console.WriteLine("TurnOnDisplay");
 
-            Console.WriteLine("Send POWER_ON");
-            _ePaperConnection.SendCommand(HardwareCodes.POWER_ON);
-            WaitUntilIdle();
+            //Console.WriteLine("Send POWER_ON");
+            //_ePaperConnection.SendCommand(HardwareCodes.POWER_ON);
+            //WaitUntilIdle();
 
             Console.WriteLine("Send DISPLAY_REFRESH");
             _ePaperConnection.SendCommand(HardwareCodes.DISPLAY_REFRESH);
@@ -124,14 +128,9 @@ namespace BetaSoft.EPaperHatCore
         {
             Console.WriteLine("Reseting...");
 
-            _connections.ResetPin.Write(GpioPinValue.High);
-            //Pi.Timing.SleepMilliseconds(200);
-            Thread.Sleep(200);
             _connections.ResetPin.Write(GpioPinValue.Low);
-            //Pi.Timing.SleepMilliseconds(10);
-            Thread.Sleep(10);
+            Thread.Sleep(200);
             _connections.ResetPin.Write(GpioPinValue.High);
-            //Pi.Timing.SleepMilliseconds(200);
             Thread.Sleep(200);
 
 
@@ -149,23 +148,13 @@ namespace BetaSoft.EPaperHatCore
         private void WaitUntilIdle()
         {
             Console.WriteLine("e-Paper is busy");
-            _ePaperConnection.SendCommand(HardwareCodes.GET_STATUS);
-            var busy = _connections.BusyPin.Read();
 
-            while (busy == false) // Very confusing, is busy=true LOW or HIGH?
+            while (_connections.BusyPin.Read() == false) // Very confusing, is busy=true LOW or HIGH?
             {
-                _ePaperConnection.SendCommand(HardwareCodes.GET_STATUS);
-                busy = _connections.BusyPin.Read();
-                
-                //Pi.Timing.SleepMilliseconds(100);
-                Thread.Sleep(10);
-
-                Console.Write(".");
+                Thread.Sleep(100);
             }
-            Console.WriteLine(string.Empty);
-            //Console.WriteLine("busy release");
+            Console.WriteLine("busy release");
             Thread.Sleep(200);
-            //Pi.Timing.SleepMilliseconds(200);
         }
 
         public void ClearScreen()
@@ -277,7 +266,7 @@ namespace BetaSoft.EPaperHatCore
             WaitUntilIdle();
 
             _ePaperConnection.SendCommand(HardwareCodes.DEEP_SLEEP);
-            _ePaperConnection.SendData(0xA5);
+            _ePaperConnection.SendData(0xa5);
         }
     }
 }

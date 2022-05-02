@@ -62,7 +62,7 @@ namespace BetaSoft.EPaperHatCore
 
                 Pi.Spi.Channel0Frequency = _specification.Channel0Frequency;
                 Channel = Pi.Spi.Channel0;
-
+                
 
                 /******* System.Device.Gpio Alternative *********/
                 //ResetPin = _specification.RST_PIN;
